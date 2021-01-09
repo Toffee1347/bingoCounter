@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Condensed'>
+        <link rel="stylesheet" href="/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script><script src="/socket.io/socket.io.js"></script>
+        <script src="/token.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <title>Bingo</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="center">
+                <div class="content">
+                    <div class="title animate__animated animate__zoomIn">Bingo counter</div>
+                    <br>
+                    <div id="buttons" class="animate__animated animate__rollIn">
+                        <form id="make" action="/start">
+                            <input name="min" type="number" placeholder="Minimum Value" id="min" required>
+                            <input name="max" type="number" placeholder="Maximum Value" id="max" required><br>
+                            <input type="submit" class="btn btn-primary margin button-anim" value="Play">
+                        </form>
+                        <br>
+                        <form id="join">
+                            <input required name="id" type="text" placeholder="Game ID" id="id">
+                            <input type="submit" class="btn" value="Join">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function onload() {
+                document.getElementById('join').onsubmit = (ev) => {
+                    ev.preventDefault()
+                    window.location.href = `/play?${document.getElementById('id').value}`
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+        <link rel="stylesheet" href="/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/token.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <title>Bingo</title>
+    </head>
+    <body onunload="return emits.emit('disconnect', window.location.search.replace('?', ''))">
+        <div class="container">
+            <div style="height: 20vh;">
+                <div style="padding-top: 10px;">
+                    <div style="float: left;">
+                        <b>Game ID: </b><x id="gameId"></x>
+                        <br>
+                        <b>Player Count: </b><x id="players"></x>
+                    </div>
+                    <div style="float: right;">
+                        <div id="calledNumbers" class="drawn"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="center-game">
+                <div class="content">
+                    <div id="user">
+                        <div id="lastNumber" class="lastNumber disable-select">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function onload() {
+                document.getElementById('gameId').innerHTML = window.location.search.replace('?', '')
+                emits.on('serverDraw', (body, token) => {
+                    if (body.number == 'Empty') {
+                        document.getElementById('lastNumber').style.fontSize = '40px'
+                        document.getElementById('lastNumber').innerHTML = `No numbers left!`
+                        window.gameEnded = true
+                    }
+                    else {
+                        document.getElementById('lastNumber').style.fontSize = '250px'
+                        document.getElementById('lastNumber').innerHTML = body.number
+                        document.getElementById('calledNumbers').innerHTML = body.drawnNumbers.join(', ')
+                        $('#lastNumber').toggleClass('numberSpin').promise().done(() => {setTimeout(()=>{$('#lastNumber').toggleClass('numberSpin')}, 500)})
+                    }
+                })
+                emits.on('count', (body, token) => {
+                    document.getElementById('players').innerHTML = body
+                })
+                emits.on('admin', (body, token) => {
+                    window.admin = true
+                    $('#lastNumber').click(() => {
+                        emits.emit('draw', {gameId:window.location.search.replace('?', '')})
+                    })
+                    document.getElementById('lastNumber').style.cursor = 'pointer'
+                            document.getElementById('lastNumber').onclick = () => {
+                                if (gameEnded) {
+                                    if (confirm('Would you like to start over?')) {
+                                        emits.emit('startOver', window.location.search.replace('?', ''))
+                                        gameEnded = false
+                                    }
+                                }
+                            }
+                })
+                emits.on('redirect', (body, token) => {
+                    if (body) alert(body)
+                    window.location.replace('/')
+                })
+                emits.on('connected', (body, token) => {
+                    if (body.currentNumber == 'Empty') {
+                        document.getElementById('lastNumber').style.fontSize = '40px'
+                        document.getElementById('lastNumber').innerHTML = 'No numbers left!'
+                    }
+                    else {
+                        document.getElementById('lastNumber').style.fontSize = '250px'
+                        document.getElementById('lastNumber').innerHTML = body.currentNumber
+                        document.getElementById('calledNumbers').innerHTML = body.usedNumbers.join(', ')
+                        $('#lastNumber').toggleClass('numberSpin').promise().done(() => {setTimeout(()=>{$('#lastNumber').toggleClass('numberSpin')}, 500)})
+                    }
+                })
+                emits.emit('join', window.location.search.replace('?', ''))
+            }
+        </script>
+    </body>
+</html>

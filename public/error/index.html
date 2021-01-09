@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Condensed'>
+        <link rel="stylesheet" href="/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script><script src="/socket.io/socket.io.js"></script>
+        <script src="/token.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <title>Bingo</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="center">
+                <div class="content">
+                    Hm, it seems like we have encountered and error, Please try again.<br>
+                    <small>
+                        Error: <x id="error"></x><br>
+                        Message: <x id="message"></x>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <script>
+            function onload() {
+                serverErr = JSON.parse(atob(window.location.hash.replace('#', '')))
+                document.getElementById('error').innerHTML = serverErr.name
+                document.getElementById('message').innerHTML = serverErr.message
+            }
+        </script>
+    </body>
+</html>
